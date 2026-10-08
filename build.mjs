@@ -134,7 +134,7 @@ export function buildAll() {
       writeFileSync(join(DIST, slug, `${id}.txt`), text);
       // The preview shows images from the local public/ folder so it works before hosting is live; Copy uses the hosted URLs.
       if (brand.optionsFor === id) writeFileSync(join(DIST, slug, 'options.html'), optionsPage(brand, p));
-      gallery.push({ brand: brand.name, slug, id, name: p.name, html, preview: renderHtml(brand, p, '../public'), text });
+      gallery.push({ brand: brand.name, slug, id, name: p.name, html, preview: renderHtml(brand, p, process.env.PREVIEW_BASE ?? '../public'), text });
     }
   }
   const cards = gallery.map((g, i) => `<section><h2>${esc(g.name)} <small>${esc(g.brand)}</small></h2><div class="sig">${g.preview}</div><template id="sig${i}">${g.html}</template><p><button data-i="${i}">Copy signature</button> <a href="${g.slug}/${g.id}.html">HTML</a> <a href="${g.slug}/${g.id}.txt">Plain text</a></p></section>`).join('\n');

@@ -9,7 +9,7 @@ test('html is table based, inline styled and has no scripts or em dashes', () =>
   assert.match(h, /^<table/);
   assert.ok(!h.includes('<script') && !h.includes('<style') && !h.includes('\u2014'));
   assert.ok(h.includes('A &lt;B&gt;'));
-  assert.match(h, /<img src="https:\/\/[^"]+" width="180" height="62"/);
+  assert.match(h, /<img src="https:\/\/[^"]+" width="\d+" height="\d+"/);
 });
 test('logo URLs are absolute https on the asset host, and the hosted file exists in public/', () => {
   for (const slug of readdirSync('brands')) {

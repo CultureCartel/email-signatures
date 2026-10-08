@@ -1,6 +1,6 @@
 # Installing a signature
 
-Open `dist/index.html` (after `node build.mjs`), find the person, press **Copy signature**, then paste it into the signature box below. The logo is a hosted image, so it needs an internet connection the first time.
+Open https://culturecartel.github.io/email-signatures/signatures/ (or `dist/index.html` after `node build.mjs`), find the person, press **Copy signature**, then paste it into the signature box below. The logo is a hosted image, so it needs an internet connection the first time.
 
 ## Gmail (web)
 Settings (gear), See all settings, General, Signature. Create new, name it, paste, set "Signature defaults" for new mail and replies, Save changes at the bottom.

@@ -1,11 +1,11 @@
-# Publishes public/ (logos and other hosted signature files) to GitHub Pages.
+# Publishes public/ (logos and other hosted signature files) and the signature copy page to GitHub Pages.
 # Signatures load images from https://culturecartel.github.io/email-signatures/<brand>/...
 # Settings, Pages, Source: GitHub Actions. Runs on every push to main that touches public/.
 name: pages
 on:
   push:
     branches: [main]
-    paths: ['public/**', '.github/workflows/pages.yml']
+    paths: ['public/**', 'brands/**', 'people/**', 'build.mjs', 'config.json', '.github/workflows/pages.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,7 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      # Site = the hosted logos (public/) plus the copy page for every signature at /signatures/.
+      - run: |
+          PREVIEW_BASE=https://culturecartel.github.io/email-signatures node build.mjs
+          mkdir -p _site && cp -r public/. _site/ && cp -r dist _site/signatures
       - uses: actions/upload-pages-artifact@v3
-        with: { path: public }
+        with: { path: _site }
       - id: deploy
         uses: actions/deploy-pages@v4
