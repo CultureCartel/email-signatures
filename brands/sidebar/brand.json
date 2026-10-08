@@ -9,12 +9,12 @@
   "instagram": "https://www.instagram.com/danforthsidebar/",
   "instagramLabel": "@danforthsidebar",
   "logo": {
-    "src": "sidebar/sidebar-logo-animated.gif",
+    "src": "sidebar/sidebar-logo-lightup.gif",
     "still": "sidebar/sidebar-logo-email.png",
     "width": 180,
     "height": 62,
     "alt": "Danforth Sidebar Toronto",
-    "srcNavy": "sidebar/sidebar-logo-animated-navy.gif"
+    "srcNavy": "sidebar/sidebar-logo-lightup-navy.gif"
   },
   "colors": {
     "ink": "#052e42",

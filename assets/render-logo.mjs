@@ -67,10 +67,12 @@ async function gif(bg, variant, out) {
     '-loop', '-1', join(PUB, out)]);
   rmSync(tmp, { recursive: true, force: true });
 }
-await gif('#ffffff', '-animated', `${brand}-logo-animated.gif`);
+// Output names come from brand.json (logo.src, logo.srcNavy) so a new animation ships under a new file name.
+const base = f => f.split('/').pop();
+await gif('#ffffff', '-animated', base(brandJson.logo.src));
 // White logo on the brand navy, for layouts with a dark band.
 const navy = brandJson.colors?.ink ?? '#052e42';
-await gif(navy, '-animated-white', `${brand}-logo-animated-navy.gif`);
+if (brandJson.logo.srcNavy) await gif(navy, '-animated-white', base(brandJson.logo.srcNavy));
 await shot(sized(svg('-white'), EW - 8), EW, EH, navy, join(PUB, `${brand}-logo-email-navy.png`));
 
 // MP4 for social and screens: 1920x1080, logo at 1400px, 30fps, then a hold.
