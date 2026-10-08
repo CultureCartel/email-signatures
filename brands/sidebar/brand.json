@@ -28,5 +28,7 @@
   "tagline": "One door east of the Danforth Music Hall.",
   "layout": "bar",
   "addressShort": "161 Danforth Ave, Toronto",
-  "optionsFor": "sava-miljanovic"
+  "optionsFor": "sava-miljanovic",
+  "slug": "sidebar",
+  "eventsEmail": "events@danforthsidebar.com"
 }

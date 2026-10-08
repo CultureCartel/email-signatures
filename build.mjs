@@ -36,10 +36,23 @@ function parts(brand, p, c) {
     phoneLink: phone && tel ? link(`tel:${tel}`, phone, c.ink) : '',
     emailLink: p.email ? link(`mailto:${p.email}`, p.email, c.ink) : '',
     venue: (color = c.faint, sep = '&nbsp;&nbsp;&middot;&nbsp;&nbsp;') => venueBits(color).join(sep),
+    venueRaw: color => venueBits(color).join('&nbsp;&nbsp;&middot;&nbsp;&nbsp;'),
   };
 }
 const logoImg = (brand, base, src, w = brand.logo.width, h = brand.logo.height) =>
   `<a href="${esc(brand.web)}"><img src="${esc(`${base}/${src}`)}" width="${w}" height="${h}" alt="${esc(brand.logo.alt)}" style="display:block;border:0;width:${w}px;height:${h}px"></a>`;
+
+const sep = c => `<span style="color:${c.faint}">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>`;
+const mapsUrl = brand => brand.mapsUrl ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(brand.address ?? '')}`;
+const pic = (brand, base, src, w, h, alt, href) => {
+  const img = `<img src="${esc(`${base}/${src}`)}" width="${w}" height="${h}" alt="${esc(alt)}" style="display:block;border:0;width:${w}px;height:${h}px">`;
+  return href ? `<a href="${esc(href)}">${img}</a>` : img;
+};
+const iconLink = (brand, base, href, icon, alt) => pic(brand, base, `${brand.slug}/icon-${icon}.png`, 14, 14, alt, href);
+function contactLinks(brand, p, color) {
+  const phone = p.phone ?? brand.phone, tel = p.phoneTel ?? brand.phoneTel;
+  return [phone && tel && link(`tel:${tel}`, phone, color), p.email && link(`mailto:${p.email}`, p.email, color)].filter(Boolean);
+}
 
 // Named layouts. A brand picks one with "layout" in brand.json; dist/<brand>/options.html shows them all side by side.
 export const LAYOUTS = {
@@ -152,6 +165,107 @@ ${phoneLink ? `<tr><td style="font:13px/20px ${F}">${phoneLink}</td></tr>` : ''}
 <tr><td style="font:13px/20px ${F}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
 <tr><td style="padding:10px 0 0 0;font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`)}</td>
 <td valign="middle">${logoImg(brand, base, brand.logo.src, 150, 52)}</td></tr>`),
+
+  // ---- Ten directions modelled on the research (2026-10-08), see docs/RESEARCH.md ----
+
+  // 1. Monochrome (after Four Design, Bybrand): black only, logo left, one hairline, details right.
+  mono: ({ p, brand, base, venueRaw }) => T(`<tr>
+<td valign="middle" style="padding:0 20px 0 0">${pic(brand, base, `${brand.slug}/${brand.slug}-logo-email-black.png`, 120, 41, brand.logo.alt)}</td>
+<td valign="middle" style="border-left:1px solid #000;padding:0 0 0 20px">${T(`
+<tr><td style="font:bold 13px/19px ${F};color:#000">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 8px 0;font:12px/17px ${F};color:#000">${esc(p.title)}</td></tr>
+<tr><td style="font:12px/18px ${F}">${contactLinks(brand, p, '#000').join('<br>')}</td></tr>
+<tr><td style="padding:6px 0 0 0;font:11px/16px ${F};color:#555">${venueRaw('#555')}</td></tr>`)}</td></tr>`),
+
+  // 2. One line (after Presentation Partners): only the essentials, spaced by separators.
+  oneline: ({ c, p, brand, base, venue }) => T(`
+<tr><td style="padding:0 0 10px 0">${logoImg(brand, base, brand.logo.src, 100, 34)}</td></tr>
+<tr><td style="font:13px/20px ${F};color:${c.ink}"><b>${esc(p.name)}</b>${sep(c)}<span style="color:${c.muted}">${esc(p.title)}</span>${sep(c)}${contactLinks(brand, p, c.ink).join(sep(c))}</td></tr>
+<tr><td style="font:11px/18px ${F};color:${c.faint}">${venue()}</td></tr>`),
+
+  // 3. Big logo (after Relish Kitchen, We Love to Travel): the wordmark carries the signature.
+  biglogo: ({ c, p, brand, base, venue }) => T(`<tr>
+<td valign="middle" style="padding:0 26px 0 0">${logoImg(brand, base, brand.logo.src, 210, 72)}</td>
+<td valign="middle">${T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 8px 0;font:12px/17px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="font:12px/19px ${F}">${contactLinks(brand, p, c.ink).join('<br>')}</td></tr>
+<tr><td style="padding:8px 0 0 0">${iconLink(brand, base, brand.instagram, 'instagram', 'Instagram')}</td></tr>`)}</td></tr>`),
+
+  // 4. Book a table (after hotel signatures with a booking call to action).
+  booking: ({ c, p, brand, base, venue }) => T(`<tr>
+<td valign="top" style="padding:0 24px 0 0">${logoImg(brand, base, brand.logo.src, 130, 45)}</td>
+<td valign="top">${T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 8px 0;font:12px/17px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="font:12px/19px ${F}">${contactLinks(brand, p, c.ink).join('<br>')}</td></tr>
+<tr><td style="padding:12px 0 0 0">${T(`<tr>
+<td bgcolor="${c.ink}" style="background:${c.ink};padding:7px 14px"><a href="${esc(brand.bookUrl ?? brand.web)}" style="font:bold 12px/16px ${F};color:#fff;text-decoration:none;letter-spacing:.5px">Book a table</a></td>
+<td style="padding:0 0 0 14px;font:12px/16px ${F}"><a href="mailto:${esc(brand.eventsEmail ?? '')}" style="color:${c.ink};text-decoration:underline">Private events</a></td></tr>`)}</td></tr>`)}</td></tr>`),
+
+  // 5. Venue banner (after hotel banners): the person, then a photo of the room, linked to the site.
+  banner: ({ c, p, brand, base, venue }) => T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}<span style="font-weight:normal;color:${c.muted}">&nbsp;&nbsp;${esc(p.title)}</span></td></tr>
+<tr><td style="padding:0 0 12px 0;font:13px/20px ${F}">${contactLinks(brand, p, c.ink).join(sep(c))}</td></tr>
+<tr><td>${pic(brand, base, `${brand.slug}/${brand.slug}-banner-window.jpg`, 480, 150, 'The window bar at Sidebar, 161 Danforth Ave', brand.web)}</td></tr>
+<tr><td style="padding:8px 0 0 0">${T(`<tr><td valign="middle" style="padding:0 14px 0 0">${logoImg(brand, base, brand.logo.src, 90, 31)}</td><td valign="middle" style="font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`)}</td></tr>`, ';width:480px'),
+
+  // 6. Sign-off (after the Four Seasons leadership signature): a serif name, quiet details, small mark.
+  signoff: ({ c, p, brand, base, venue }) => T(`
+<tr><td style="font:21px/26px Georgia,'Times New Roman',serif;color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:3px 0 12px 0;font:10px/15px ${F};color:${c.muted};letter-spacing:2px;text-transform:uppercase">${esc(p.title.replace(' | ', ', '))}</td></tr>
+<tr><td style="font:12px/19px ${F}">${contactLinks(brand, p, c.ink).join(sep(c))}</td></tr>
+<tr><td style="padding:14px 0 6px 0">${logoImg(brand, base, brand.logo.src, 96, 33)}</td></tr>
+<tr><td style="font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`),
+
+  // 7. Colour bar (after Nine-Eighteen): a navy bar on top, social and web icons under a hairline.
+  colourbar: ({ c, p, brand, base, venue }) => T(`
+<tr><td height="4" bgcolor="${c.ink}" style="height:4px;background:${c.ink};font-size:0;line-height:0">&nbsp;</td></tr>
+<tr><td style="padding:14px 0 0 0">${T(`<tr>
+<td valign="top" style="padding:0 22px 0 0">${logoImg(brand, base, brand.logo.src, 120, 41)}</td>
+<td valign="top">${T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 6px 0;font:12px/17px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="font:12px/19px ${F}">${contactLinks(brand, p, c.ink).join('<br>')}</td></tr>`)}</td></tr>`)}</td></tr>
+<tr><td style="padding:12px 0 0 0"><table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%"><tr><td style="border-top:1px solid #dfe3e6;padding:10px 0 0 0">${T(`<tr>
+<td style="padding:0 10px 0 0">${iconLink(brand, base, brand.instagram, 'instagram', 'Instagram')}</td>
+<td style="padding:0 10px 0 0">${iconLink(brand, base, brand.web, 'web', 'Website')}</td>
+<td style="padding:0 14px 0 0">${iconLink(brand, base, mapsUrl(brand), 'pin', 'Directions')}</td>
+<td style="font:11px/16px ${F};color:${c.faint}">${esc(brand.addressShort ?? brand.address)}</td></tr>`)}</td></tr></table></td></tr>`, ';width:420px'),
+
+  // 8. Icon rows (after The Home Edit): a small line icon in front of each detail.
+  icons: ({ c, p, brand, base }) => {
+    const row = (icon, inner) => `<tr><td valign="middle" style="padding:0 10px 5px 0;width:14px" width="14">${pic(brand, base, `${brand.slug}/icon-${icon}.png`, 14, 14, '')}</td><td valign="middle" style="padding:0 0 5px 0;font:12px/16px ${F};color:${c.ink}">${inner}</td></tr>`;
+    const phone = p.phone ?? brand.phone, tel = p.phoneTel ?? brand.phoneTel;
+    return T(`<tr>
+<td valign="top" style="padding:0 26px 0 0">${T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 12px 0;font:12px/17px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td>${logoImg(brand, base, brand.logo.src, 120, 41)}</td></tr>`)}</td>
+<td valign="top" style="padding:2px 0 0 0">${T(
+  (phone && tel ? row('phone', link(`tel:${tel}`, phone, c.ink)) : '') +
+  (p.email ? row('mail', link(`mailto:${p.email}`, p.email, c.ink)) : '') +
+  row('web', link(brand.web, brand.webLabel, c.ink)) +
+  row('instagram', link(brand.instagram, brand.instagramLabel, c.ink)) +
+  row('pin', link(mapsUrl(brand), brand.addressShort ?? brand.address, c.ink)))}</td></tr>`);
+  },
+
+  // 9. Directions (hospitality practice: tell people how to find you).
+  directions: ({ c, p, brand, base }) => T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 8px 0;font:12px/17px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="font:12px/19px ${F}">${contactLinks(brand, p, c.ink).join(sep(c))}</td></tr>
+<tr><td style="padding:14px 0 0 0">${T(`<tr>
+<td valign="middle" style="padding:0 18px 0 0">${logoImg(brand, base, brand.logo.src, 110, 38)}</td>
+<td valign="middle" style="border-left:1px solid #dfe3e6;padding:0 0 0 18px;font:12px/18px ${F};color:${c.ink}">${esc(brand.addressShort ?? brand.address)}<br><span style="font:italic 12px/18px Georgia,'Times New Roman',serif;color:${c.muted}">${esc(brand.tagline ?? '')}</span><br><a href="${esc(mapsUrl(brand))}" style="font:bold 12px/18px ${F};color:${c.ink};text-decoration:underline">Get directions</a></td></tr>`)}</td></tr>`),
+
+  // 10. Centred (after luxury hotel signatures): the mark on top, everything on one axis.
+  centred: ({ c, p, brand, base, venue }) => T(`
+<tr><td align="center" style="padding:0 0 12px 0">${logoImg(brand, base, brand.logo.src, 130, 45)}</td></tr>
+<tr><td align="center" style="font:bold 12px/18px ${F};color:${c.ink};letter-spacing:2.5px;text-transform:uppercase">${esc(p.name)}</td></tr>
+<tr><td align="center" style="padding:0 0 8px 0;font:12px/17px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td align="center" style="font:12px/19px ${F}">${contactLinks(brand, p, c.ink).join(sep(c))}</td></tr>
+<tr><td align="center" style="padding:4px 0 0 0;font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`, ';width:420px'),
 };
 
 // Email safe: tables, inline styles, system fonts, absolute https image URLs, explicit sizes.
