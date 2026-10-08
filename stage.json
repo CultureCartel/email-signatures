@@ -1,0 +1,15 @@
+{
+  "sidebar": {
+    "title": "Your Sidebar email signature",
+    "people": ["sava-miljanovic", "jack-doering", "sean-seymour"],
+    "options": [
+      { "layout": "mono", "name": "Monochrome", "note": "Black only. Logo, one fine line, your details." },
+      { "layout": "biglogo", "name": "Big logo", "note": "The wordmark leads, your details beside it, an Instagram link." },
+      { "layout": "banner", "name": "The window", "note": "Your details, then the window bar with the logo lighting up over it." },
+      { "layout": "colourbar", "name": "Navy bar", "note": "A navy bar on top. Instagram, website and directions underneath." },
+      { "layout": "icons", "name": "Icons", "note": "A small line icon in front of each detail." },
+      { "layout": "directions", "name": "Directions", "note": "Where to find us, the one-door-east line and a Get directions link." }
+    ],
+    "cloudflare": { "project": "sidebar-interim", "branch": "owners-3bb23a5896" }
+  }
+}

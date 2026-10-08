@@ -39,3 +39,36 @@ const photo = readFileSync(join(ROOT, 'brands', brand, 'photos', 'couple-at-the-
 await shot(`<div style="width:960px;height:300px;background:url(data:image/jpeg;base64,${photo}) 50% 38%/100% auto no-repeat"></div>`, 960, 300, `${brand}-banner-window.jpg`, false);
 await browser.close();
 console.log(`extras rendered for ${brand} in public/${brand}`);
+
+// Animated banner for the banner layout: the client photo, a soft navy filter so white reads on it,
+// and the white light-up logo playing over it. 800x276, shown at 480x166. Frame one is the finished
+// banner (Outlook for Windows shows only that); plays once and rests on the end.
+{
+  const { execFileSync } = await import('node:child_process');
+  const { mkdtempSync, rmSync, writeFileSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const W = 800, H = 276, LW = 300;
+  const white = readFileSync(join(ROOT, 'brands', brand, 'logo', `${brand}-logo-animated-white.svg`), 'utf8')
+    .replace(/width="\d+" height="\d+"/, `width="${LW}" height="${Math.round(LW * 676 / 2004)}"`);
+  const b2 = await chromium.launch({ executablePath: process.env.CHROMIUM ?? '/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell' });
+  const pg = await b2.newPage({ viewport: { width: W, height: H } });
+  await pg.setContent(`<html><body style="margin:0"><div style="position:relative;width:${W}px;height:${H}px;overflow:hidden;background:url(data:image/jpeg;base64,${photo}) 50% 36%/100% auto no-repeat">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,46,66,.55),rgba(5,46,66,.35) 55%,rgba(5,46,66,.5))"></div>
+<div style="position:absolute;inset:0;display:grid;place-items:center">${white}</div></div></body></html>`);
+  const tmp = mkdtempSync(join(tmpdir(), 'banner-'));
+  const fps = 25, n = Math.round(fps * 2.6), f = i => `f${String(i).padStart(4, '0')}.png`;
+  for (let i = 0; i <= n; i++) {
+    await pg.evaluate(t => document.getAnimations().forEach(a => { a.pause(); a.currentTime = t; }), (i / fps) * 1000);
+    await pg.screenshot({ path: join(tmp, f(i)) });
+  }
+  await b2.close();
+  const list = [`file '${f(n)}'`, 'duration 0.04'];
+  for (let i = 0; i <= n; i++) list.push(`file '${f(i)}'`, `duration ${i === n ? 4 : 1 / fps}`);
+  list.push(`file '${f(n)}'`);
+  writeFileSync(join(tmp, 'list.txt'), list.join('\n'));
+  execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', join(tmp, 'list.txt'),
+    '-vf', 'split[a][b];[a]palettegen=max_colors=160:stats_mode=full[p];[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle',
+    '-loop', '-1', join(PUB, `${brand}-banner-lightup.gif`)]);
+  rmSync(tmp, { recursive: true, force: true });
+  console.log('banner GIF rendered');
+}

@@ -203,12 +203,12 @@ ${phoneLink ? `<tr><td style="font:13px/20px ${F}">${phoneLink}</td></tr>` : ''}
 <td bgcolor="${c.ink}" style="background:${c.ink};padding:7px 14px"><a href="${esc(brand.bookUrl ?? brand.web)}" style="font:bold 12px/16px ${F};color:#fff;text-decoration:none;letter-spacing:.5px">Book a table</a></td>
 <td style="padding:0 0 0 14px;font:12px/16px ${F}"><a href="mailto:${esc(brand.eventsEmail ?? '')}" style="color:${c.ink};text-decoration:underline">Private events</a></td></tr>`)}</td></tr>`)}</td></tr>`),
 
-  // 5. Venue banner (after hotel banners): the person, then a photo of the room, linked to the site.
+  // 5. Venue banner (after hotel banner signatures): the person, then the room with the logo lighting up over it, address under it on the left.
   banner: ({ c, p, brand, base, venue }) => T(`
 <tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}<span style="font-weight:normal;color:${c.muted}">&nbsp;&nbsp;${esc(p.title)}</span></td></tr>
 <tr><td style="padding:0 0 12px 0;font:13px/20px ${F}">${contactLinks(brand, p, c.ink).join(sep(c))}</td></tr>
-<tr><td>${pic(brand, base, `${brand.slug}/${brand.slug}-banner-window.jpg`, 480, 150, 'The window bar at Sidebar, 161 Danforth Ave', brand.web)}</td></tr>
-<tr><td style="padding:8px 0 0 0">${T(`<tr><td valign="middle" style="padding:0 14px 0 0">${logoImg(brand, base, brand.logo.src, 90, 31)}</td><td valign="middle" style="font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`)}</td></tr>`, ';width:480px'),
+<tr><td>${pic(brand, base, `${brand.slug}/${brand.slug}-banner-lightup.gif`, 480, 166, 'Danforth Sidebar Toronto, the window bar at 161 Danforth Ave', brand.web)}</td></tr>
+<tr><td style="padding:8px 0 0 0;font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`, ';width:480px'),
 
   // 6. Sign-off (after the Four Seasons leadership signature): a serif name, quiet details, small mark.
   signoff: ({ c, p, brand, base, venue }) => T(`
@@ -218,20 +218,20 @@ ${phoneLink ? `<tr><td style="font:13px/20px ${F}">${phoneLink}</td></tr>` : ''}
 <tr><td style="padding:14px 0 6px 0">${logoImg(brand, base, brand.logo.src, 96, 33)}</td></tr>
 <tr><td style="font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`),
 
-  // 7. Colour bar (after Nine-Eighteen): a navy bar on top, social and web icons under a hairline.
-  colourbar: ({ c, p, brand, base, venue }) => T(`
+  // 7. Colour bar (after Nine-Eighteen): a navy bar on top, social and web icons under a hairline. Bar and hairline run the width of the content.
+  colourbar: ({ c, p, brand, base }) => T(`
 <tr><td height="4" bgcolor="${c.ink}" style="height:4px;background:${c.ink};font-size:0;line-height:0">&nbsp;</td></tr>
-<tr><td style="padding:14px 0 0 0">${T(`<tr>
-<td valign="top" style="padding:0 22px 0 0">${logoImg(brand, base, brand.logo.src, 120, 41)}</td>
-<td valign="top">${T(`
+<tr><td style="padding:16px 0 14px 0">${T(`<tr>
+<td valign="middle" style="padding:0 22px 0 0">${logoImg(brand, base, brand.logo.src, 120, 41)}</td>
+<td valign="middle">${T(`
 <tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
 <tr><td style="padding:0 0 6px 0;font:12px/17px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
 <tr><td style="font:12px/19px ${F}">${contactLinks(brand, p, c.ink).join('<br>')}</td></tr>`)}</td></tr>`)}</td></tr>
-<tr><td style="padding:12px 0 0 0"><table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%"><tr><td style="border-top:1px solid #dfe3e6;padding:10px 0 0 0">${T(`<tr>
-<td style="padding:0 10px 0 0">${iconLink(brand, base, brand.instagram, 'instagram', 'Instagram')}</td>
-<td style="padding:0 10px 0 0">${iconLink(brand, base, brand.web, 'web', 'Website')}</td>
-<td style="padding:0 14px 0 0">${iconLink(brand, base, mapsUrl(brand), 'pin', 'Directions')}</td>
-<td style="font:11px/16px ${F};color:${c.faint}">${esc(brand.addressShort ?? brand.address)}</td></tr>`)}</td></tr></table></td></tr>`, ';width:420px'),
+<tr><td style="border-top:1px solid #dfe3e6;padding:10px 0 0 0">${T(`<tr>
+<td valign="middle" style="padding:0 10px 0 0">${iconLink(brand, base, brand.instagram, 'instagram', 'Instagram')}</td>
+<td valign="middle" style="padding:0 10px 0 0">${iconLink(brand, base, brand.web, 'web', 'Website')}</td>
+<td valign="middle" style="padding:0 12px 0 0">${iconLink(brand, base, mapsUrl(brand), 'pin', 'Directions')}</td>
+<td valign="middle" style="font:11px/14px ${F};color:${c.faint}">${esc(brand.addressShort ?? brand.address)}</td></tr>`)}</td></tr>`),
 
   // 8. Icon rows (after The Home Edit): a small line icon in front of each detail.
   icons: ({ c, p, brand, base }) => {
