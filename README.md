@@ -25,7 +25,7 @@ Open `dist/index.html`, press Copy signature, paste into the mail app (see `docs
 Copy `people/<brand>/_example.json` to `first-last.json`, fill it in, build, commit. History shows who changed what and when.
 
 ## Add a client
-Copy a folder under `brands/` and `people/`, edit `brand.json`, put the logo SVGs in `brands/<brand>/logo/` named `<brand>-logo.svg` (plus `-black`, `-white`, `-animated`), run `npm run logo -- <brand>`, set `logo.src` to the file under `public/`. Email apps cannot show SVG, so signatures always load the GIF or PNG from `public/`, served at `config.assetBase`. `layout: "card"` is the quiet layout: name, title, direct lines, then the logo and one small venue line. Leave it out for the stacked layout.
+Copy a folder under `brands/` and `people/`, edit `brand.json`, put the logo SVGs in `brands/<brand>/logo/` named `<brand>-logo.svg` (plus `-black`, `-white`, `-animated`), run `npm run logo -- <brand>`, set `logo.src` to the file under `public/`. Email apps cannot show SVG, so signatures always load the GIF or PNG from `public/`, served at `config.assetBase`. `layout` picks one of the named layouts in `build.mjs` (card, bar, band, wordmark, letter). Set `optionsFor` to a person file name and the build writes `dist/<brand>/options.html` showing that person in every layout. Leave `layout` out for the stacked layout.
 
 ## Rules
 No em dashes. System fonts only inside signatures (Georgia for the name, Arial for the rest), because mail apps ignore web fonts. Culture Cartel colours: ink #17181b, cream #f2e9d6, emerald #1a5e43, brass #b9894a (darkened to #8a5a1c for text on white so it stays readable).

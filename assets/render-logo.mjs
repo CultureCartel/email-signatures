@@ -39,9 +39,9 @@ const EW = (brandJson.logo?.width ?? 200) * 2, EH = Math.round(EW * ratio / 2) *
 await shot(sized(svg(''), EW - 8), EW, EH, '#ffffff', join(PUB, `${brand}-logo-email.png`));
 
 // Frames of the animation, stepped with the Web Animations API so timing is exact.
-async function frames(w, h, bg, logoW, fps, seconds, dir) {
+async function frames(w, h, bg, logoW, fps, seconds, dir, variant = '-animated') {
   await page.setViewportSize({ width: w, height: h });
-  await page.setContent(`<html><body style="margin:0;background:${bg};display:grid;place-items:center;width:${w}px;height:${h}px">${sized(svg('-animated'), logoW)}</body></html>`);
+  await page.setContent(`<html><body style="margin:0;background:${bg};display:grid;place-items:center;width:${w}px;height:${h}px">${sized(svg(variant), logoW)}</body></html>`);
   const n = Math.round(fps * seconds);
   for (let i = 0; i <= n; i++) {
     await page.evaluate(t => document.getAnimations().forEach(a => { a.pause(); a.currentTime = t; }), (i / fps) * 1000);
@@ -52,16 +52,26 @@ async function frames(w, h, bg, logoW, fps, seconds, dir) {
 const tmp = mkdtempSync(join(tmpdir(), 'logo-'));
 const DUR = 2.7;
 
-// GIF: concat list gives each frame its own duration.
-const n = await frames(EW, EH, '#ffffff', EW - 8, 30, DUR, tmp);
-const list = [`file 'f${String(n).padStart(4, '0')}.png'`, 'duration 0.04'];
-for (let i = 0; i <= n; i++) list.push(`file 'f${String(i).padStart(4, '0')}.png'`, `duration ${i === n ? 4 : 0.033}`);
-list.push(`file 'f${String(n).padStart(4, '0')}.png'`);
-writeFileSync(join(tmp, 'list.txt'), list.join('\n'));
-execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', join(tmp, 'list.txt'),
-  '-vf', 'split[a][b];[a]palettegen=max_colors=64:reserve_transparent=0:stats_mode=full[p];[b][p]paletteuse=dither=none',
-  '-loop', '-1', join(PUB, `${brand}-logo-animated.gif`)]);
-rmSync(tmp, { recursive: true, force: true });
+
+// Builds a GIF from rendered frames: frame one is the finished logo (Outlook shows only that), plays once, rests on the end.
+async function gif(bg, variant, out) {
+  const tmp = mkdtempSync(join(tmpdir(), 'logo-'));
+  const n = await frames(EW, EH, bg, EW - 8, 30, DUR, tmp, variant);
+  const f = i => `file 'f${String(i).padStart(4, '0')}.png'`;
+  const list = [f(n), 'duration 0.04'];
+  for (let i = 0; i <= n; i++) list.push(f(i), `duration ${i === n ? 4 : 0.033}`);
+  list.push(f(n));
+  writeFileSync(join(tmp, 'list.txt'), list.join('\n'));
+  execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', join(tmp, 'list.txt'),
+    '-vf', 'split[a][b];[a]palettegen=max_colors=64:reserve_transparent=0:stats_mode=full[p];[b][p]paletteuse=dither=none',
+    '-loop', '-1', join(PUB, out)]);
+  rmSync(tmp, { recursive: true, force: true });
+}
+await gif('#ffffff', '-animated', `${brand}-logo-animated.gif`);
+// White logo on the brand navy, for layouts with a dark band.
+const navy = brandJson.colors?.ink ?? '#052e42';
+await gif(navy, '-animated-white', `${brand}-logo-animated-navy.gif`);
+await shot(sized(svg('-white'), EW - 8), EW, EH, navy, join(PUB, `${brand}-logo-email-navy.png`));
 
 // MP4 for social and screens: 1920x1080, logo at 1400px, 30fps, then a hold.
 const tmp2 = mkdtempSync(join(tmpdir(), 'logo-'));

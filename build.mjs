@@ -8,7 +8,6 @@ const ROOT = dirname(fileURLToPath(import.meta.url));
 const DIST = join(ROOT, 'dist');
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const read = p => JSON.parse(readFileSync(p, 'utf8'));
-// Layouts: 'card' (logo under the details, no labels) or the default stacked layout.
 // Hosted files live in public/ and are served from config.assetBase (GitHub Pages, see .github/workflows/pages.yml).
 export const config = read(join(ROOT, 'config.json'));
 export const logoUrl = (brand, base = config.assetBase) => brand.logo && (brand.logo.url ?? `${base}/${brand.logo.src}`);
@@ -27,25 +26,74 @@ const contactRows = (brand, p, c, labelWidth) => {
   ].join('');
 };
 
+// Shared pieces for the named layouts.
+const T = (rows, extra = '') => `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;font-family:${F}${extra}">${rows}</table>`;
+const link = (href, text, color) => `<a href="${esc(href)}" style="color:${color};text-decoration:none">${esc(text)}</a>`;
+function parts(brand, p, c) {
+  const phone = p.phone ?? brand.phone, tel = p.phoneTel ?? brand.phoneTel;
+  const venueBits = color => [brand.address && esc(brand.addressShort ?? brand.address), brand.web && link(brand.web, brand.webLabel, color), brand.instagram && link(brand.instagram, brand.instagramLabel, color)].filter(Boolean);
+  return {
+    phoneLink: phone && tel ? link(`tel:${tel}`, phone, c.ink) : '',
+    emailLink: p.email ? link(`mailto:${p.email}`, p.email, c.ink) : '',
+    venue: (color = c.faint, sep = '&nbsp;&nbsp;&middot;&nbsp;&nbsp;') => venueBits(color).join(sep),
+  };
+}
+const logoImg = (brand, base, src, w = brand.logo.width, h = brand.logo.height) =>
+  `<a href="${esc(brand.web)}"><img src="${esc(`${base}/${src}`)}" width="${w}" height="${h}" alt="${esc(brand.logo.alt)}" style="display:block;border:0;width:${w}px;height:${h}px"></a>`;
+
+// Named layouts. A brand picks one with "layout" in brand.json; dist/<brand>/options.html shows them all side by side.
+export const LAYOUTS = {
+  // Card: name, title, direct lines, logo, one small venue line. No labels, no rules.
+  card: ({ c, p, img, phoneLink, emailLink, venue }) => T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink};letter-spacing:.2px">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 10px 0;font:13px/18px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+${phoneLink ? `<tr><td style="font:13px/20px ${F}">${phoneLink}</td></tr>` : ''}${emailLink ? `<tr><td style="font:13px/20px ${F}">${emailLink}</td></tr>` : ''}
+<tr><td style="padding:18px 0 10px 0">${img}</td></tr>
+<tr><td style="font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`),
+
+  // Sidebar: a literal side bar. A solid navy rule runs down the left of everything.
+  bar: ({ c, p, brand, base, phoneLink, emailLink, venue }) => T(`<tr>
+<td width="3" style="width:3px;background:${c.ink}" bgcolor="${c.ink}">&nbsp;</td>
+<td style="padding:2px 0 2px 16px">${T(`
+<tr><td style="font:bold 15px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 12px 0;font:13px/18px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="font:13px/20px ${F}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
+<tr><td style="padding:16px 0 8px 0">${logoImg(brand, base, brand.logo.src, 140, 48)}</td></tr>
+<tr><td style="font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`)}</td></tr>`),
+
+  // Band: plain text up top, then a navy band carrying the white animated logo and the venue line.
+  band: ({ c, p, brand, base, phoneLink, emailLink, venue }) => T(`
+<tr><td style="padding:0 0 2px 0;font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 10px 0;font:13px/18px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="padding:0 0 14px 0;font:13px/20px ${F}">${[phoneLink, emailLink].filter(Boolean).join('&nbsp;&nbsp;&nbsp;')}</td></tr>
+<tr><td bgcolor="${c.ink}" style="background:${c.ink};padding:16px 20px">${T(`<tr>
+<td valign="middle" style="padding:0 20px 0 0">${logoImg(brand, base, brand.logo.srcNavy, 150, 52)}</td>
+<td valign="middle" style="font:11px/17px ${F};color:#c9d3d9">${venue('#c9d3d9', '<br>')}</td></tr>`)}</td></tr>`, ';width:420px'),
+
+  // Wordmark: the logo leads, a short rule, then the person. Contact on one line.
+  wordmark: ({ c, p, img, phoneLink, emailLink, venue }) => T(`
+<tr><td style="padding:0 0 14px 0">${img}</td></tr>
+<tr><td style="padding:0 0 12px 0"><table cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td width="32" height="2" bgcolor="${c.ink}" style="width:32px;height:2px;background:${c.ink};font-size:0;line-height:0">&nbsp;</td></tr></table></td></tr>
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}<span style="font-weight:normal;color:${c.muted}">&nbsp;&nbsp;${esc(p.title)}</span></td></tr>
+<tr><td style="padding:4px 0 6px 0;font:13px/20px ${F}">${[phoneLink, emailLink].filter(Boolean).join('&nbsp;&nbsp;&middot;&nbsp;&nbsp;')}</td></tr>
+<tr><td style="font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`),
+
+  // Letter: a serif name like a handwritten sign-off, the rest small and quiet, logo to the right.
+  letter: ({ c, p, brand, base, phoneLink, emailLink, venue }) => T(`<tr>
+<td valign="top" style="padding:0 28px 0 0">${T(`
+<tr><td style="font:19px/24px Georgia,'Times New Roman',serif;color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:2px 0 12px 0;font:italic 13px/18px Georgia,'Times New Roman',serif;color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="font:12px/19px ${F}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
+<tr><td style="padding:8px 0 0 0;font:11px/16px ${F};color:${c.faint}">${venue(c.faint, '<br>')}</td></tr>`)}</td>
+<td valign="top" style="padding:4px 0 0 28px;border-left:1px solid #e3e1dc">${logoImg(brand, base, brand.logo.src, 150, 52)}</td></tr>`),
+};
+
 // Email safe: tables, inline styles, system fonts, absolute https image URLs, explicit sizes.
-export function renderHtml(brand, p, base = config.assetBase) {
+export function renderHtml(brand, p, base = config.assetBase, layout) {
   const c = brand.colors;
   const img = brand.logo && `<a href="${esc(brand.web)}"><img src="${esc(logoUrl(brand, base))}" width="${brand.logo.width}" height="${brand.logo.height}" alt="${esc(brand.logo.alt)}" style="display:block;border:0;width:${brand.logo.width}px;height:${brand.logo.height}px"></a>`;
-  if (brand.layout === 'card') {
-    // Quiet card: name, title, direct lines, then the wordmark and one small venue line. No labels, no rules.
-    const link = (href, text, color) => `<a href="${esc(href)}" style="color:${color};text-decoration:none">${esc(text)}</a>`;
-    const phone = p.phone ?? brand.phone, tel = p.phoneTel ?? brand.phoneTel;
-    const line = inner => `<tr><td style="padding:0;font:13px/20px ${F};color:${c.ink}">${inner}</td></tr>`;
-    const venue = [brand.address && esc(brand.addressShort ?? brand.address), brand.web && link(brand.web, brand.webLabel, c.faint), brand.instagram && link(brand.instagram, brand.instagramLabel, c.faint)]
-      .filter(Boolean).join('&nbsp;&nbsp;&middot;&nbsp;&nbsp;');
-    return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;font-family:${F};color:${c.ink}">
-<tr><td style="padding:0;font:bold 14px/20px ${F};color:${c.ink};letter-spacing:.2px">${esc(p.name)}</td></tr>
-<tr><td style="padding:0 0 10px 0;font:13px/18px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
-${phone && tel ? line(link(`tel:${tel}`, phone, c.ink)) : ''}${p.email ? line(link(`mailto:${p.email}`, p.email, c.ink)) : ''}
-${img ? `<tr><td style="padding:18px 0 10px 0">${img}</td></tr>` : ''}
-${venue ? `<tr><td style="padding:0;font:11px/16px ${F};color:${c.faint}">${venue}</td></tr>` : ''}
-</table>`;
-  }
+  const L = LAYOUTS[layout ?? brand.layout];
+  if (L) return L({ brand, p, c, base, F, img, ...parts(brand, p, c) });
   const logo = img
     ? `<tr><td style="padding:0 0 12px 0">${img}</td></tr>`
     : `<tr><td style="padding:0 0 10px 0;font:20px/22px Georgia,'Times New Roman',serif;color:${c.ink}">${esc(brand.name)}</td></tr>`;
@@ -64,6 +112,13 @@ export function renderText(brand, p) {
     .filter(x => x !== null && x !== undefined && x !== false).join('\n') + '\n';
 }
 
+function optionsPage(brand, p) {
+  const blocks = Object.keys(LAYOUTS).map((k, i) => `<section><h2>${String.fromCharCode(65 + i)}. ${k}</h2><div class="sig">${renderHtml(brand, p, '../../public', k)}</div></section>`).join('\n');
+  return `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(brand.name)} signature options</title>
+<style>body{font:15px/1.5 system-ui;max-width:760px;margin:0 auto;padding:24px 16px;background:#eceae5;color:#17181b}section{background:#fff;padding:28px;margin:0 0 18px;overflow-x:auto}h2{font:600 12px system-ui;letter-spacing:1px;text-transform:uppercase;color:#777;margin:0 0 18px}</style>
+<h1 style="font:400 28px Georgia,serif">${esc(brand.name)}: signature options</h1>${blocks}`;
+}
+
 export function buildAll() {
   rmSync(DIST, { recursive: true, force: true });
   const gallery = [];
@@ -78,6 +133,7 @@ export function buildAll() {
       writeFileSync(join(DIST, slug, `${id}.html`), html);
       writeFileSync(join(DIST, slug, `${id}.txt`), text);
       // The preview shows images from the local public/ folder so it works before hosting is live; Copy uses the hosted URLs.
+      if (brand.optionsFor === id) writeFileSync(join(DIST, slug, 'options.html'), optionsPage(brand, p));
       gallery.push({ brand: brand.name, slug, id, name: p.name, html, preview: renderHtml(brand, p, '../public'), text });
     }
   }

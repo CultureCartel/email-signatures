@@ -13,7 +13,8 @@
     "still": "sidebar/sidebar-logo-email.png",
     "width": 180,
     "height": 62,
-    "alt": "Danforth Sidebar Toronto"
+    "alt": "Danforth Sidebar Toronto",
+    "srcNavy": "sidebar/sidebar-logo-animated-navy.gif"
   },
   "colors": {
     "ink": "#052e42",
@@ -26,5 +27,6 @@
   },
   "tagline": "One door east of the Danforth Music Hall.",
   "layout": "card",
-  "addressShort": "161 Danforth Ave, Toronto"
+  "addressShort": "161 Danforth Ave, Toronto",
+  "optionsFor": "sava-miljanovic"
 }
