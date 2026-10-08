@@ -67,6 +67,6 @@ console.log(`staged ${cfg.options.length} options for ${people.length} people in
 if (process.argv.includes('--deploy')) {
   for (const k of ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID']) if (!process.env[k]) { console.error(`Set ${k} first.`); process.exit(1); }
   const { project, branch } = cfg.cloudflare;
-  execFileSync('npx', ['--yes', 'wrangler@3.114.0', 'pages', 'deploy', out, '--project-name', project, '--branch', branch, '--commit-dirty=true'], { stdio: 'inherit' });
+  execFileSync('npx', ['--yes', 'wrangler@3.112.0', 'pages', 'deploy', out, '--project-name', project, '--branch', branch, '--commit-dirty=true'], { stdio: 'inherit' });
   console.log(`\nPrivate link: https://${branch}.${project}.pages.dev`);
 }
