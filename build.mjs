@@ -86,6 +86,30 @@ ${phoneLink ? `<tr><td style="font:13px/20px ${F}">${phoneLink}</td></tr>` : ''}
 <tr><td style="font:12px/19px ${F}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
 <tr><td style="padding:8px 0 0 0;font:11px/16px ${F};color:${c.faint}">${venue(c.faint, '<br>')}</td></tr>`)}</td>
 <td valign="top" style="padding:4px 0 0 28px;border-left:1px solid #e3e1dc">${logoImg(brand, base, brand.logo.src, 150, 52)}</td></tr>`),
+
+  // Inline: logo left, three lines beside it. Compact, no rules.
+  inline: ({ c, p, brand, base, phoneLink, emailLink, venue }) => T(`<tr>
+<td valign="middle" style="padding:0 22px 0 0">${logoImg(brand, base, brand.logo.src, 130, 45)}</td>
+<td valign="middle">${T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}<span style="font-weight:normal;color:${c.muted}">&nbsp;&nbsp;${esc(p.title)}</span></td></tr>
+<tr><td style="font:13px/20px ${F}">${[phoneLink, emailLink].filter(Boolean).join(`<span style="color:${c.faint}">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>`)}</td></tr>
+<tr><td style="font:11px/18px ${F};color:${c.faint}">${venue()}</td></tr>`)}</td></tr>`),
+
+  // Business card: a printed card in a fine border. Logo top left, the person at the bottom.
+  businesscard: ({ c, p, brand, base, phoneLink, emailLink, venue }) => T(`<tr><td style="border:1px solid #d6dadd;padding:22px 26px 20px 26px">${T(`
+<tr><td style="padding:0 0 30px 0">${logoImg(brand, base, brand.logo.src, 116, 40)}</td></tr>
+<tr><td style="font:bold 14px/19px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 12px 0;font:12px/17px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="font:12px/19px ${F}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
+<tr><td style="padding:12px 0 0 0;font:10px/15px ${F};color:${c.faint}">${venue(c.faint, '<br>')}</td></tr>`)}</td></tr>`, ';width:360px'),
+
+  // Type: name and title in spaced capitals, the same tracking as the wordmark. Small logo underneath.
+  type: ({ c, p, brand, base, phoneLink, emailLink, venue }) => T(`
+<tr><td style="font:bold 12px/18px ${F};color:${c.ink};letter-spacing:3px;text-transform:uppercase">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 12px 0;font:10px/16px ${F};color:${c.muted};letter-spacing:2px;text-transform:uppercase">${esc(p.title.replace(' | ', ', '))}</td></tr>
+<tr><td style="font:12px/19px ${F}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
+<tr><td style="padding:16px 0 8px 0">${logoImg(brand, base, brand.logo.src, 110, 38)}</td></tr>
+<tr><td style="font:9px/14px ${F};color:${c.faint};letter-spacing:1.5px;text-transform:uppercase">${venue(c.faint, '&nbsp;&nbsp;&middot;&nbsp;&nbsp;')}</td></tr>`),
 };
 
 // Email safe: tables, inline styles, system fonts, absolute https image URLs, explicit sizes.
@@ -137,9 +161,10 @@ export function buildAll() {
       gallery.push({ brand: brand.name, slug, id, name: p.name, html, preview: renderHtml(brand, p, process.env.PREVIEW_BASE ?? '../public'), text });
     }
   }
-  const cards = gallery.map((g, i) => `<section><h2>${esc(g.name)} <small>${esc(g.brand)}</small></h2><div class="sig">${g.preview}</div><template id="sig${i}">${g.html}</template><p><button data-i="${i}">Copy signature</button> <a href="${g.slug}/${g.id}.html">HTML</a> <a href="${g.slug}/${g.id}.txt">Plain text</a></p></section>`).join('\n');
+  let lastBrand = '';
+  const cards = gallery.map((g, i) => `${g.brand !== lastBrand ? `<h2 class="brand">${esc((lastBrand = g.brand))}</h2>` : ''}<section aria-label="${esc(g.name)}"><div class="sig">${g.preview}</div><template id="sig${i}">${g.html}</template><p><button data-i="${i}">Copy signature</button> <a href="${g.slug}/${g.id}.html">HTML</a> <a href="${g.slug}/${g.id}.txt">Plain text</a></p></section>`).join('\n');
   writeFileSync(join(DIST, 'index.html'), `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Email signatures</title>
-<style>body{font:16px/1.5 system-ui;max-width:760px;margin:0 auto;padding:24px 16px;background:#f2e9d6;color:#17181b}section{background:#fff;padding:20px;margin:0 0 20px;border-radius:2px;overflow-x:auto}h2{font:400 22px Georgia,serif;margin:0 0 14px}small{font:12px system-ui;color:#5b5a55;margin-left:8px}button{font:500 13px system-ui;padding:10px 16px;background:#1a5e43;color:#fff;border:0;cursor:pointer;border-radius:2px}p>a{color:#1a5e43;margin-left:12px}#copybox{position:fixed;left:-9999px}</style>
+<style>body{font:16px/1.5 system-ui;max-width:760px;margin:0 auto;padding:24px 16px;background:#f2e9d6;color:#17181b}section{background:#fff;padding:20px;margin:0 0 20px;border-radius:2px;overflow-x:auto}h2.brand{font:600 12px system-ui;letter-spacing:1px;text-transform:uppercase;color:#5b5a55;margin:28px 0 10px}button{font:500 13px system-ui;padding:10px 16px;background:#1a5e43;color:#fff;border:0;cursor:pointer;border-radius:2px}p>a{color:#1a5e43;margin-left:12px}#copybox{position:fixed;left:-9999px}</style>
 <h1 style="font:400 32px Georgia,serif">Email signatures</h1><p>Click Copy, then paste into your mail app's signature box. See docs/INSTALL.md.</p>
 ${cards}
 <div id="copybox"></div>
