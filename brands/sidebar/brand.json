@@ -1,0 +1,30 @@
+{
+  "name": "Sidebar",
+  "legalLine": "Sidebar, 161 Danforth Ave, Toronto ON M4K 1N2",
+  "web": "https://danforthsidebar.com",
+  "webLabel": "danforthsidebar.com",
+  "address": "161 Danforth Ave, Toronto ON M4K 1N2",
+  "phone": "(647) 350-7227",
+  "phoneTel": "+16473507227",
+  "instagram": "https://www.instagram.com/danforthsidebar/",
+  "instagramLabel": "@danforthsidebar",
+  "logo": {
+    "src": "sidebar/sidebar-logo-animated.gif",
+    "still": "sidebar/sidebar-logo-email.png",
+    "width": 180,
+    "height": 62,
+    "alt": "Danforth Sidebar Toronto"
+  },
+  "colors": {
+    "ink": "#052e42",
+    "link": "#052e42",
+    "muted": "#6b6f73",
+    "faint": "#8d9195",
+    "cream": "#f2e9d6",
+    "green": "#1a5e43",
+    "brass": "#8a5a1c"
+  },
+  "tagline": "One door east of the Danforth Music Hall.",
+  "layout": "card",
+  "addressShort": "161 Danforth Ave, Toronto"
+}

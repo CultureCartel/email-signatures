@@ -1,0 +1,1 @@
+{ "name": "email-signatures", "private": true, "type": "module", "scripts": { "build": "node build.mjs", "test": "node --test", "logo": "node assets/render-logo.mjs" }, "devDependencies": { "playwright-core": "1.48.2" } }
