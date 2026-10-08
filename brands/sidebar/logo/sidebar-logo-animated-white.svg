@@ -1,9 +1,9 @@
-<svg class="sb-light" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 2004 676" width="2004" height="676" role="img" aria-labelledby="t">
+<svg class="sb-light-w" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 2004 676" width="2004" height="676" role="img" aria-labelledby="t">
   <title id="t">Danforth Sidebar Toronto</title>
   <style>
-  .sb-light .l{animation:sb-on .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d)}
-  @keyframes sb-on{0%{fill:#3b5868;filter:none}18%{fill:#e9a956;filter:drop-shadow(0 0 22px rgba(233,169,86,.75))}100%{fill:#FFFFFF;filter:drop-shadow(0 0 0 rgba(233,169,86,0))}}
-  @media (prefers-reduced-motion:reduce){.sb-light .l{animation:none}}
+  .sb-light-w .l{animation:sb-on-w .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d)}
+  @keyframes sb-on-w{0%{fill:#3b5868;filter:none}18%{fill:#e9a956;filter:drop-shadow(0 0 22px rgba(233,169,86,.75))}100%{fill:#FFFFFF;filter:drop-shadow(0 0 0 rgba(233,169,86,0))}}
+  @media (prefers-reduced-motion:reduce){.sb-light-w .l{animation:none}}
   </style>
 <g fill="#FFFFFF" fill-rule="evenodd">
   <g id="danforth">

@@ -110,6 +110,48 @@ ${phoneLink ? `<tr><td style="font:13px/20px ${F}">${phoneLink}</td></tr>` : ''}
 <tr><td style="font:12px/19px ${F}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
 <tr><td style="padding:16px 0 8px 0">${logoImg(brand, base, brand.logo.src, 110, 38)}</td></tr>
 <tr><td style="font:9px/14px ${F};color:${c.faint};letter-spacing:1.5px;text-transform:uppercase">${venue(c.faint, '&nbsp;&nbsp;&middot;&nbsp;&nbsp;')}</td></tr>`),
+
+  // Tagline: the person, then the logo with the venue's own line beside it in an italic serif.
+  tagline: ({ c, p, brand, base, phoneLink, emailLink, venue }) => T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 10px 0;font:13px/18px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="font:13px/20px ${F}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
+<tr><td style="padding:16px 0 0 0">${T(`<tr>
+<td valign="middle" style="padding:0 16px 0 0">${logoImg(brand, base, brand.logo.src, 120, 41)}</td>
+<td valign="middle" style="font:italic 13px/18px Georgia,'Times New Roman',serif;color:${c.ink}">${esc(brand.tagline ?? '')}<br><span style="font:11px/18px ${F};font-style:normal;color:${c.faint}">${venue()}</span></td></tr>`)}</td></tr>`),
+
+  // Navy card: the whole signature on the brand navy, white type, the logo lighting up in white.
+  navycard: ({ c, p, brand, base }) => {
+    const phone = p.phone ?? brand.phone, tel = p.phoneTel ?? brand.phoneTel;
+    const w = (href, text) => link(href, text, '#ffffff');
+    return T(`<tr><td bgcolor="${c.ink}" style="background:${c.ink};padding:20px 24px">${T(`<tr>
+<td valign="middle" style="padding:0 24px 0 0">${logoImg(brand, base, brand.logo.srcNavy, 130, 45)}</td>
+<td valign="middle" style="border-left:1px solid #2c4d5f;padding:0 0 0 24px">${T(`
+<tr><td style="font:bold 14px/20px ${F};color:#ffffff">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 8px 0;font:12px/17px ${F};color:#a9bcc7">${esc(p.title)}</td></tr>
+<tr><td style="font:12px/19px ${F};color:#ffffff">${[phone && tel && w(`tel:${tel}`, phone), p.email && w(`mailto:${p.email}`, p.email)].filter(Boolean).join('<br>')}</td></tr>`)}</td></tr>`)}</td></tr>
+<tr><td style="padding:8px 0 0 0;font:11px/16px ${F};color:${c.faint}">${[brand.addressShort && esc(brand.addressShort), brand.web && link(brand.web, brand.webLabel, c.faint), brand.instagram && link(brand.instagram, brand.instagramLabel, c.faint)].filter(Boolean).join('&nbsp;&nbsp;&middot;&nbsp;&nbsp;')}</td></tr>`, ';width:440px');
+  },
+
+  // Columns: name and title on the left, phone and email on the right, logo and venue underneath.
+  columns: ({ c, p, brand, base, phoneLink, emailLink, venue }) => T(`
+<tr><td>${T(`<tr>
+<td valign="top" style="padding:0 32px 0 0">${T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="font:13px/18px ${F};color:${c.muted}">${esc(p.title)}</td></tr>`)}</td>
+<td valign="top" style="font:13px/19px ${F}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>`)}</td></tr>
+<tr><td style="padding:16px 0 0 0">${T(`<tr>
+<td valign="bottom" style="padding:0 18px 0 0">${logoImg(brand, base, brand.logo.src, 110, 38)}</td>
+<td valign="bottom" style="font:11px/16px ${F};color:${c.faint};padding:0 0 2px 0">${venue()}</td></tr>`)}</td></tr>`),
+
+  // Logo right: the person on the left, the logo on the right, nothing between them but space.
+  logoright: ({ c, p, brand, base, phoneLink, emailLink, venue }) => T(`<tr>
+<td valign="middle" style="padding:0 40px 0 0">${T(`
+<tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 10px 0;font:13px/18px ${F};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="font:13px/20px ${F}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
+<tr><td style="padding:10px 0 0 0;font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`)}</td>
+<td valign="middle">${logoImg(brand, base, brand.logo.src, 150, 52)}</td></tr>`),
 };
 
 // Email safe: tables, inline styles, system fonts, absolute https image URLs, explicit sizes.
