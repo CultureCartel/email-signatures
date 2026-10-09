@@ -5,7 +5,7 @@ name: pages
 on:
   push:
     branches: [main]
-    paths: ['public/**', 'brands/**', 'people/**', 'build.mjs', 'config.json', '.github/workflows/pages.yml']
+    paths: ['public/**', 'brands/**', 'people/**', 'build.mjs', 'studio.mjs', 'studio.json', 'config.json', '.github/workflows/pages.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,6 +24,7 @@ jobs:
       # Site = the hosted logos (public/) plus the copy page for every signature at /signatures/.
       - run: |
           PREVIEW_BASE=https://culturecartel.github.io/email-signatures node build.mjs
+          node studio.mjs sidebar
           mkdir -p _site && cp -r public/. _site/ && cp -r dist _site/signatures
       - uses: actions/upload-pages-artifact@v3
         with: { path: _site }

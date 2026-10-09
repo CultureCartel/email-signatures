@@ -14,6 +14,10 @@ dist/                        build output (not committed). dist/index.html is th
 docs/INSTALL.md              how to install a signature in each mail app
 ```
 
+## Signature Studio (what staff use)
+
+`studio.json` lists, per brand, the people order, the logo animations, the layouts on offer and the install steps. `node studio.mjs <brand>` writes the studio to `dist/studio/<brand>/` and also to `dist/<brand>/index.html`, so GitHub Pages serves it at `/signatures/<brand>/`. `node studio.mjs <brand> --deploy` publishes it to its own Cloudflare Pages project (Sidebar: `sidebar-signatures`, at https://sig.danforthsidebar.com). Staff pick their name, the logo (light up or still) and one of the layouts, then copy. Every combination is pre-rendered by `build.mjs`, so what they copy is exactly what the build makes.
+
 ## Stage options for a client to choose from
 
 `stage.json` lists, per brand, the people and the layouts to offer. `node stage.mjs <brand>` writes a private choosing page to `dist/stage/<brand>/` (tabs per person, their own details, noindex). `node stage.mjs <brand> --deploy` publishes it to a Cloudflare Pages preview branch of the client's site project (needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`). A preview branch never touches the production site.

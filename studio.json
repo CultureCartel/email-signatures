@@ -1,0 +1,154 @@
+{
+  "sidebar": {
+    "title": "Sidebar Signature Studio",
+    "order": [
+      "jack-doering",
+      "sava-miljanovic",
+      "sean-seymour",
+      "info",
+      "bookings",
+      "events",
+      "marketing",
+      "admin"
+    ],
+    "animations": [
+      {
+        "id": "lightup",
+        "name": "Light up",
+        "note": "The letters light up warm, one by one, then settle on the finished logo.",
+        "src": "sidebar/sidebar-logo-lightup.gif"
+      },
+      {
+        "id": "still",
+        "name": "Still",
+        "note": "The finished logo, no motion.",
+        "src": "sidebar/sidebar-logo-email.png"
+      }
+    ],
+    "layouts": [
+      {
+        "id": "bar",
+        "layout": "bar",
+        "name": "The bar",
+        "note": "The house layout. A navy rule, your details, the logo and the venue line."
+      },
+      {
+        "id": "mono",
+        "layout": "mono",
+        "name": "Monochrome",
+        "note": "Black only. Logo, one hairline, your details. Uses the black logo."
+      },
+      {
+        "id": "oneline",
+        "layout": "oneline",
+        "name": "One line",
+        "note": "Only the essentials on one line, spaced by dots. The shortest."
+      },
+      {
+        "id": "biglogo",
+        "layout": "biglogo",
+        "name": "Big logo",
+        "note": "The wordmark carries it, your details small beside it."
+      },
+      {
+        "id": "booking",
+        "layout": "booking",
+        "name": "Book a table",
+        "note": "Every email ends with a way to book and a link for private events."
+      },
+      {
+        "id": "banner",
+        "layout": "banner",
+        "name": "Venue banner",
+        "note": "A strip of the window bar under your details. Uses its own banner art."
+      },
+      {
+        "id": "signoff",
+        "layout": "signoff",
+        "name": "Sign-off",
+        "note": "A serif name, quiet details, a small logo. After Four Seasons."
+      },
+      {
+        "id": "colourbar",
+        "layout": "colourbar",
+        "name": "Navy bar",
+        "note": "A navy bar on top, Instagram, website and directions underneath."
+      },
+      {
+        "id": "icons",
+        "layout": "icons",
+        "name": "Icons",
+        "note": "A small line icon in front of each detail."
+      },
+      {
+        "id": "directions",
+        "layout": "directions",
+        "name": "Directions",
+        "note": "Where to find us, one door east of the Music Hall, and a Get directions link."
+      },
+      {
+        "id": "centred",
+        "layout": "centred",
+        "name": "Centred",
+        "note": "The logo on top, everything on one centre line."
+      }
+    ],
+    "install": [
+      {
+        "name": "Apple Mail",
+        "steps": [
+          "Open this page in Safari on your Mac and press Copy signature.",
+          "In Mail: Mail menu, Settings, Signatures.",
+          "Pick your Sidebar account on the left, press +, name it Sidebar.",
+          "Untick <b>Always match my default message font</b>, then paste over the placeholder text.",
+          "Under <b>Choose Signature</b>, pick Sidebar. Close the window to save."
+        ],
+        "note": "The logo lights up in Apple Mail on Mac, iPhone and iPad."
+      },
+      {
+        "name": "iPhone and iPad",
+        "steps": [
+          "Open this page in Safari on the phone and tap Copy signature.",
+          "Settings, Apps, Mail, Signature.",
+          "Choose <b>Per Account</b>, clear the text under your Sidebar address and paste.",
+          "If it pastes as plain text, shake the phone and tap <b>Undo Change Attributes</b>. The design comes back.",
+          "Go back to save."
+        ]
+      },
+      {
+        "name": "Outlook",
+        "steps": [
+          "Open this page in Edge or Chrome and click Copy signature.",
+          "New Outlook or outlook.com: Settings, Account, Signatures, New signature.",
+          "Classic Outlook on Windows: File, Options, Mail, Signatures, New.",
+          "Paste, name it Sidebar, and set it for new messages and replies.",
+          "Save."
+        ],
+        "note": "Outlook for Windows shows the finished logo without the motion."
+      },
+      {
+        "name": "Gmail",
+        "steps": [
+          "Open this page in Chrome and click Copy signature.",
+          "In Gmail on the web: gear icon, See all settings, General.",
+          "Under Signature press Create new, name it Sidebar, paste.",
+          "Under Signature defaults pick Sidebar for new emails and replies.",
+          "Scroll to the bottom and Save Changes."
+        ]
+      },
+      {
+        "name": "Android",
+        "steps": [
+          "Open this page in Chrome on the phone, pick your name and tap <b>Copy plain text</b>.",
+          "Gmail app: menu, Settings, your Sidebar address, Mobile signature, paste, OK.",
+          "Samsung Email: menu, Settings, your Sidebar account, Signature, turn it on, paste."
+        ],
+        "note": "Android mail apps only keep plain text, so the logo does not show there. Desktop and iPhone show the full design."
+      }
+    ],
+    "cloudflare": {
+      "project": "sidebar-signatures",
+      "domain": "sig.danforthsidebar.com"
+    }
+  }
+}
