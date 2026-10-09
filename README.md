@@ -35,7 +35,7 @@ Copy a folder under `brands/` and `people/`, edit `brand.json`, put the logo SVG
 No em dashes. System fonts only inside signatures (Georgia for the name, Arial for the rest), because mail apps ignore web fonts. Culture Cartel colours: ink #17181b, cream #f2e9d6, emerald #1a5e43, brass #b9894a (darkened to #8a5a1c for text on white so it stays readable).
 
 ## Status
-- Sidebar role signatures use planned addresses at danforthsidebar.com. They are not live until the mailboxes exist.
+- Sidebar mailboxes are live on Purelymail (2026-10-08): info, bookings, events, marketing, admin, jack, sava, sean. Every one has a signature here. reservations@ was dropped because it does not exist; table and event requests go to bookings@.
 - Sidebar co-owner signatures (Sava Miljanovic, Jack Doering, Sean Seymour) are built: layout `bar`, light-up logo. Layout picked by Claude on 2026-10-08 when Jarryd asked to keep moving; change `layout` in brands/sidebar/brand.json to switch (card, bar, band, wordmark, letter).
 - Copy page for staff: https://culturecartel.github.io/email-signatures/signatures/ Logos load from GitHub Pages (Settings, Pages, Source: GitHub Actions).
 - Culture Cartel uses a text wordmark until a hosted logo PNG exists.
