@@ -314,17 +314,25 @@ export function buildAll() {
       writeFileSync(join(DIST, slug, `${id}.txt`), text);
       // The preview shows images from the local public/ folder so it works before hosting is live; Copy uses the hosted URLs.
       if (brand.optionsFor === id) writeFileSync(join(DIST, slug, 'options.html'), optionsPage(brand, p));
-      gallery.push({ brand: brand.name, slug, id, name: p.name, html, preview: renderHtml(brand, p, process.env.PREVIEW_BASE ?? '../public'), text });
+      gallery.push({ brand: brand.name, slug, id, name: p.name, html, preview: renderHtml(brand, p, process.env.PREVIEW_BASE ?? '../public'), previewDeep: renderHtml(brand, p, process.env.PREVIEW_BASE ?? '../../public'), text });
     }
   }
-  let lastBrand = '';
-  const cards = gallery.map((g, i) => `${g.brand !== lastBrand ? `<h2 class="brand">${esc((lastBrand = g.brand))}</h2>` : ''}<section aria-label="${esc(g.name)}"><div class="sig">${g.preview}</div><template id="sig${i}">${g.html}</template><p><button data-i="${i}">Copy signature</button> <a href="${g.slug}/${g.id}.html">HTML</a> <a href="${g.slug}/${g.id}.txt">Plain text</a></p></section>`).join('\n');
-  writeFileSync(join(DIST, 'index.html'), `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Email signatures</title>
+  // One page for everything (dist/index.html) and one page per brand (dist/<brand>/index.html), so a client's staff only see their own signatures.
+  const page = (items, { title, intro, deep }) => {
+    let lastBrand = '';
+    const cards = items.map((g, i) => `${!deep && g.brand !== lastBrand ? `<h2 class="brand">${esc((lastBrand = g.brand))}</h2>` : ''}<section aria-label="${esc(g.name)}"><div class="sig">${deep ? g.previewDeep : g.preview}</div><template id="sig${i}">${g.html}</template><p><button data-i="${i}">Copy signature</button> <a href="${deep ? '' : `${g.slug}/`}${g.id}.html">HTML</a> <a href="${deep ? '' : `${g.slug}/`}${g.id}.txt">Plain text</a></p></section>`).join('\n');
+    return `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${deep ? '<meta name="robots" content="noindex,nofollow">' : ''}<title>${esc(title)}</title>
 <style>body{font:16px/1.5 system-ui;max-width:760px;margin:0 auto;padding:24px 16px;background:#f2e9d6;color:#17181b}section{background:#fff;padding:20px;margin:0 0 20px;border-radius:2px;overflow-x:auto}h2.brand{font:600 12px system-ui;letter-spacing:1px;text-transform:uppercase;color:#5b5a55;margin:28px 0 10px}button{font:500 13px system-ui;padding:10px 16px;background:#1a5e43;color:#fff;border:0;cursor:pointer;border-radius:2px}p>a{color:#1a5e43;margin-left:12px}#copybox{position:fixed;left:-9999px}</style>
-<h1 style="font:400 32px Georgia,serif">Email signatures</h1><p>Click Copy, then paste into your mail app's signature box. See docs/INSTALL.md.</p>
+<h1 style="font:400 32px Georgia,serif">${esc(title)}</h1><p>${intro}</p>
 ${cards}
 <div id="copybox"></div>
-<script>document.querySelectorAll('button[data-i]').forEach(b=>b.addEventListener('click',async()=>{const html=document.getElementById('sig'+b.dataset.i).innerHTML;const box=document.getElementById('copybox');box.innerHTML=html;try{await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([box.innerText],{type:'text/plain'})})]);b.textContent='Copied'}catch{const r=document.createRange();r.selectNodeContents(box);const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');b.textContent='Copied'}setTimeout(()=>b.textContent='Copy signature',2000)}))</script>`);
+<script>document.querySelectorAll('button[data-i]').forEach(b=>b.addEventListener('click',async()=>{const html=document.getElementById('sig'+b.dataset.i).innerHTML;const box=document.getElementById('copybox');box.innerHTML=html;try{await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([box.innerText],{type:'text/plain'})})]);b.textContent='Copied'}catch{const r=document.createRange();r.selectNodeContents(box);const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');b.textContent='Copied'}setTimeout(()=>b.textContent='Copy signature',2000)}))</script>`;
+  };
+  writeFileSync(join(DIST, 'index.html'), page(gallery, { title: 'Email signatures', intro: "Click Copy, then paste into your mail app's signature box. See docs/INSTALL.md." }));
+  for (const slug of [...new Set(gallery.map(g => g.slug))]) {
+    const items = gallery.filter(g => g.slug === slug);
+    writeFileSync(join(DIST, slug, 'index.html'), page(items, { title: `${items[0].brand} email signatures`, intro: 'Find your name, press Copy signature, then paste it into your mail app. On Android, open Plain text and copy that instead.', deep: true }));
+  }
   return gallery;
 }
 
