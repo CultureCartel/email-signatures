@@ -1,1 +1,7 @@
-{ "name": "The Loop TO", "title": "Events and listings desk", "email": "info@theloopto.com", "phone": null }
+{
+  "name": "The Loop TO",
+  "title": "Events and listings desk",
+  "email": "info@theloopto.com",
+  "phone": null,
+  "note": "Event listings are always welcome."
+}
