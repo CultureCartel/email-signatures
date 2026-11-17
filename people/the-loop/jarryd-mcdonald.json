@@ -1,1 +1,2 @@
-{ "name": "Jarryd McDonald", "title": "Founder, Culture Cartel Inc.", "email": "info@theloopto.com", "phone": "(647) 459-2154", "phoneTel": "+16474592154" }
+{ "name": "Jarryd McDonald", "title": "Founder, Culture Cartel Inc.", "email": "info@theloopto.com", "phone": "(647) 459-2154", "phoneTel": "+16474592154",
+  "logo2": { "src": "culture-cartel/culture-cartel-wordmark-email.png", "width": 120, "height": 63, "alt": "Culture Cartel", "href": "https://www.culturecartel.ca" } }
