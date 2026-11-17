@@ -26,14 +26,14 @@
     "brass": "#b3191e"
   },
   "tagline": "Keeping Toronto in the loop.",
-  "layout": "edition",
+  "layout": "split",
   "optionsFor": "info",
   "slug": "the-loop",
   "division": {
     "label": "A division of",
-    "src": "culture-cartel/culture-cartel-mark-email.png",
-    "width": 90,
-    "height": 26,
+    "src": "culture-cartel/culture-cartel-graffiti-email.png",
+    "width": 84,
+    "height": 44,
     "alt": "Culture Cartel",
     "href": "https://www.culturecartel.ca"
   }

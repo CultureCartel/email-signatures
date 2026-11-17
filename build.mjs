@@ -92,21 +92,20 @@ ${phoneLink ? `<tr><td style="font:13px/20px ${F}">${phoneLink}</td></tr>` : ''}
 ${p.logo2 ? `<tr><td style="padding:10px 0 12px 0">${pic(brand, base, p.logo2.src, p.logo2.width, p.logo2.height, p.logo2.alt, p.logo2.href)}</td></tr>` : ''}
 <tr><td style="font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`),
 
-  // Edition: a printed-card sign-off. Serif name, italic title, a hairline, then a lockup of the brand logo and the parent company it is a division of.
-  edition: ({ c, p, brand, base, img, phoneLink, emailLink }) => {
-    const d = brand.division ?? { label: 'Part of', src: brand.logo?.src, width: 0, height: 0, alt: '', href: brand.web }, G = "Georgia,'Times New Roman',serif", rule = '#d9d4c8';
-    return T(`
-<tr><td style="font:18px/24px ${G};color:${c.ink}">${esc(p.name)}</td></tr>
-<tr><td style="padding:1px 0 14px 0;font:italic 13px/18px ${G};color:${c.muted}">${esc(p.title)}</td></tr>
-<tr><td style="font:12px/19px ${F};color:${c.ink}">${[phoneLink, emailLink].filter(Boolean).join(sep(c))}</td></tr>
-${p.note ? `<tr><td style="padding:2px 0 0 0;font:italic 12px/18px ${G};color:${c.muted}">${esc(p.note)}</td></tr>` : ''}
-<tr><td style="padding:16px 0 14px 0">${T(`<tr><td width="380" height="1" bgcolor="${rule}" style="width:380px;height:1px;background:${rule};font-size:0;line-height:0">&nbsp;</td></tr>`)}</td></tr>
-<tr><td>${T(`<tr>
-<td valign="middle" style="padding:0 16px 0 0">${img}</td>
-${brand.division ? `<td valign="middle" width="1" height="34" bgcolor="${rule}" style="width:1px;background:${rule};font-size:0;line-height:0">&nbsp;</td>
-<td valign="middle" style="padding:0 10px 0 16px;font:9px/12px ${F};letter-spacing:1.6px;color:${c.faint};white-space:nowrap">${esc(d.label.toUpperCase())}</td>
-<td valign="middle">${pic(brand, base, d.src, d.width, d.height, d.alt, d.href)}</td>` : ''}</tr>`)}</td></tr>
-<tr><td style="padding:12px 0 0 0;font:11px/16px ${F};color:${c.faint}">${link(brand.web, brand.webLabel, c.faint)}${sep(c)}${link(brand.instagram, brand.instagramLabel, c.faint)}${sep(c)}<span style="font-style:italic;font-family:${G}">${esc(brand.tagline)}</span></td></tr>`);
+  // Split: brand logo and parent company stacked on the left, a hairline, the person on the right.
+  split: ({ c, p, brand, base, img, phoneLink, emailLink }) => {
+    const d = brand.division, G = "Georgia,'Times New Roman',serif", rule = c.rule ?? c.ink;
+    const parent = d ? `<tr><td style="padding:16px 0 5px 0;font:9px/12px ${F};letter-spacing:1.6px;color:${c.faint}">${esc(d.label.toUpperCase())}</td></tr>
+<tr><td>${pic(brand, base, d.src, d.width, d.height, d.alt, d.href)}</td></tr>` : '';
+    return T(`<tr>
+<td valign="top" style="padding:2px 22px 0 0">${T(`<tr><td>${img}</td></tr>${parent}`)}</td>
+<td valign="top" width="2" bgcolor="${rule}" style="width:2px;background:${rule};font-size:0;line-height:0">&nbsp;</td>
+<td valign="top" style="padding:0 0 0 22px">${T(`
+<tr><td style="font:19px/24px ${G};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:1px 0 12px 0;font:italic 13px/18px ${G};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="font:12px/20px ${F};color:${c.ink}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
+${p.note ? `<tr><td style="padding:6px 0 0 0;font:italic 12px/17px ${G};color:${c.muted}">${esc(p.note)}</td></tr>` : ''}
+<tr><td style="padding:12px 0 0 0;font:11px/16px ${F};color:${c.faint}">${link(brand.web, brand.webLabel, c.faint)}${sep(c)}${link(brand.instagram, brand.instagramLabel, c.faint)}</td></tr>`)}</td></tr>`);
   },
 
   // Letter: a serif name like a handwritten sign-off, the rest small and quiet, logo to the right.
