@@ -86,7 +86,7 @@ ${phoneLink ? `<tr><td style="font:13px/20px ${F}">${phoneLink}</td></tr>` : ''}
   // Wordmark: the logo leads, a short rule, then the person. Contact on one line.
   wordmark: ({ c, p, img, phoneLink, emailLink, venue }) => T(`
 <tr><td style="padding:0 0 14px 0">${img}</td></tr>
-<tr><td style="padding:0 0 12px 0"><table cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td width="32" height="2" bgcolor="${c.ink}" style="width:32px;height:2px;background:${c.ink};font-size:0;line-height:0">&nbsp;</td></tr></table></td></tr>
+<tr><td style="padding:0 0 12px 0"><table cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td width="32" height="${c.rule ? 3 : 2}" bgcolor="${c.rule ?? c.ink}" style="width:32px;height:${c.rule ? 3 : 2}px;background:${c.rule ?? c.ink};font-size:0;line-height:0">&nbsp;</td></tr></table></td></tr>
 <tr><td style="font:bold 14px/20px ${F};color:${c.ink}">${esc(p.name)}<span style="font-weight:normal;color:${c.muted}">&nbsp;&nbsp;${esc(p.title)}</span></td></tr>
 <tr><td style="padding:4px 0 6px 0;font:13px/20px ${F}">${[phoneLink, emailLink].filter(Boolean).join('&nbsp;&nbsp;&middot;&nbsp;&nbsp;')}</td></tr>
 <tr><td style="font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`),

@@ -1,0 +1,32 @@
+{
+  "name": "The Loop TO",
+  "legalLine": "The Loop TO, Toronto",
+  "web": "https://theloopto.com",
+  "webLabel": "theloopto.com",
+  "address": "Toronto, Ontario",
+  "addressShort": "Toronto",
+  "phone": null,
+  "instagram": "https://www.instagram.com/theloopto/",
+  "instagramLabel": "@theloopto",
+  "logo": {
+    "src": "the-loop/the-loop-logo-draw-on.gif",
+    "still": "the-loop/the-loop-logo-email.png",
+    "width": 200,
+    "height": 31,
+    "alt": "The Loop TO"
+  },
+  "colors": {
+    "ink": "#141414",
+    "link": "#141414",
+    "muted": "#5e5a52",
+    "faint": "#8a857b",
+    "rule": "#e3262b",
+    "cream": "#f3eee4",
+    "green": "#2e6b4e",
+    "brass": "#b3191e"
+  },
+  "tagline": "Keeping Toronto in the loop.",
+  "layout": "wordmark",
+  "optionsFor": "info",
+  "slug": "the-loop"
+}

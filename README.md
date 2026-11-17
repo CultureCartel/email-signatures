@@ -44,3 +44,4 @@ No em dashes. System fonts only inside signatures (Georgia for the name, Arial f
 - Copy page for Sidebar staff (Sidebar only): https://culturecartel.github.io/email-signatures/signatures/sidebar/ . Every brand gets its own page at signatures/<brand>/; signatures/ shows all brands. Logos load from GitHub Pages (Settings, Pages, Source: GitHub Actions).
 - Culture Cartel uses a text wordmark until a hosted logo PNG exists.
 Sidebar colours: logo navy #052e42 for the name and direct lines, grey #6b6f73 for the title, #8d9195 for the venue line.
+- The Loop TO (theloopto.com) signatures added 2026-11-17: brand `the-loop`, layout `wordmark` with a red rule, a logo that draws itself on (letters stroke by stroke, then the red loop round the double O, then the TO badge; about 2.5 seconds, plays once, rests on the full logo). Copy page: https://culturecartel.github.io/email-signatures/signatures/the-loop/ . Logo source is the site's own wordmark.
