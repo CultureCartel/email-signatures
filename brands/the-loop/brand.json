@@ -13,7 +13,8 @@
     "still": "the-loop/the-loop-logo-email.png",
     "width": 160,
     "height": 25,
-    "alt": "The Loop TO"
+    "alt": "The Loop TO",
+    "srcDark": "the-loop/the-loop-logo-email-navy.png"
   },
   "colors": {
     "ink": "#141414",
@@ -26,15 +27,16 @@
     "brass": "#b3191e"
   },
   "tagline": "Keeping Toronto in the loop.",
-  "layout": "split",
+  "layout": "letterhead",
   "optionsFor": "info",
   "slug": "the-loop",
   "division": {
     "label": "A division of",
     "src": "culture-cartel/culture-cartel-graffiti-email.png",
-    "width": 84,
-    "height": 44,
+    "width": 56,
+    "height": 30,
     "alt": "Culture Cartel",
-    "href": "https://www.culturecartel.ca"
+    "href": "https://www.culturecartel.ca",
+    "srcDark": "culture-cartel/culture-cartel-graffiti-email-dark.png"
   }
 }

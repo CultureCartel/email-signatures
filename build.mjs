@@ -42,6 +42,8 @@ function parts(brand, p, c) {
 const logoImg = (brand, base, src, w = brand.logo.width, h = brand.logo.height) =>
   `<a href="${esc(brand.web)}"><img src="${esc(`${base}/${src}`)}" width="${w}" height="${h}" alt="${esc(brand.logo.alt)}" style="display:block;border:0;width:${w}px;height:${h}px"></a>`;
 
+const loopLogo = (brand, base, w, src = brand.logo.src) => logoImg(brand, base, src, w, Math.round(w * brand.logo.height / brand.logo.width));
+const divisionLogo = (brand, base, src = brand.division.src) => pic(brand, base, src, brand.division.width, brand.division.height, brand.division.alt, brand.division.href);
 const sep = c => `<span style="color:${c.faint}">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>`;
 const mapsUrl = brand => brand.mapsUrl ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(brand.address ?? '')}`;
 const pic = (brand, base, src, w, h, alt, href) => {
@@ -92,20 +94,31 @@ ${phoneLink ? `<tr><td style="font:13px/20px ${F}">${phoneLink}</td></tr>` : ''}
 ${p.logo2 ? `<tr><td style="padding:10px 0 12px 0">${pic(brand, base, p.logo2.src, p.logo2.width, p.logo2.height, p.logo2.alt, p.logo2.href)}</td></tr>` : ''}
 <tr><td style="font:11px/16px ${F};color:${c.faint}">${venue()}</td></tr>`),
 
-  // Split: brand logo and parent company stacked on the left, a hairline, the person on the right.
-  split: ({ c, p, brand, base, img, phoneLink, emailLink }) => {
-    const d = brand.division, G = "Georgia,'Times New Roman',serif", rule = c.rule ?? c.ink;
-    const parent = d ? `<tr><td style="padding:16px 0 5px 0;font:9px/12px ${F};letter-spacing:1.6px;color:${c.faint}">${esc(d.label.toUpperCase())}</td></tr>
-<tr><td>${pic(brand, base, d.src, d.width, d.height, d.alt, d.href)}</td></tr>` : '';
-    return T(`<tr>
-<td valign="top" style="padding:2px 22px 0 0">${T(`<tr><td>${img}</td></tr>${parent}`)}</td>
-<td valign="top" width="2" bgcolor="${rule}" style="width:2px;background:${rule};font-size:0;line-height:0">&nbsp;</td>
-<td valign="top" style="padding:0 0 0 22px">${T(`
-<tr><td style="font:19px/24px ${G};color:${c.ink}">${esc(p.name)}</td></tr>
-<tr><td style="padding:1px 0 12px 0;font:italic 13px/18px ${G};color:${c.muted}">${esc(p.title)}</td></tr>
-<tr><td style="font:12px/20px ${F};color:${c.ink}">${[phoneLink, emailLink].filter(Boolean).join('<br>')}</td></tr>
-${p.note ? `<tr><td style="padding:6px 0 0 0;font:italic 12px/17px ${G};color:${c.muted}">${esc(p.note)}</td></tr>` : ''}
-<tr><td style="padding:12px 0 0 0;font:11px/16px ${F};color:${c.faint}">${link(brand.web, brand.webLabel, c.faint)}${sep(c)}${link(brand.instagram, brand.instagramLabel, c.faint)}</td></tr>`)}</td></tr>`);
+  // Letterhead / brand band / quiet line: the three Loop sign-offs. Each shows the brand logo and, when set, the parent company in brand.division.
+  letterhead: ({ c, p, brand, base, phoneLink, emailLink }) => {
+    const G = "Georgia,'Times New Roman',serif", d = brand.division, rule = '#d9d4c8';
+    return T(`
+<tr><td style="font:20px/24px ${G};color:${c.ink}">${esc(p.name)}</td><td rowspan="2" align="right" valign="top" style="padding-left:40px">${loopLogo(brand, base, 150)}</td></tr>
+<tr><td style="padding:0 0 12px 0;font:italic 13px/18px ${G};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td colspan="2" height="1" bgcolor="${rule}" style="font-size:0;line-height:0">&nbsp;</td></tr>
+<tr><td colspan="2" style="padding:11px 0 0 0;font:12px/18px ${F};color:${c.ink}">${[phoneLink, emailLink].filter(Boolean).join(sep(c))}</td></tr>
+<tr><td colspan="2" style="padding:12px 0 0 0">${T(`<tr><td valign="middle" style="font:11px/14px ${F};color:${c.faint}">${link(brand.web, brand.webLabel, c.faint)}${sep(c)}${link(brand.instagram, brand.instagramLabel, c.faint)}${d ? `${sep(c)}a division of` : ''}</td>${d ? `<td valign="middle" style="padding-left:10px">${divisionLogo(brand, base)}</td>` : ''}</tr>`)}</td></tr>`, ';width:420px');
+  },
+  brandband: ({ c, p, brand, base, phoneLink, emailLink }) => {
+    const G = "Georgia,'Times New Roman',serif", d = brand.division, dark = brand.logo.srcDark;
+    return T(`
+<tr><td style="font:20px/24px ${G};color:${c.ink}">${esc(p.name)}</td></tr>
+<tr><td style="padding:0 0 6px 0;font:italic 13px/18px ${G};color:${c.muted}">${esc(p.title)}</td></tr>
+<tr><td style="padding:0 0 14px 0;font:12px/19px ${F};color:${c.ink}">${[phoneLink, emailLink].filter(Boolean).join(sep(c))}</td></tr>
+<tr><td bgcolor="${c.ink}" style="background:${c.ink};padding:14px 18px">${T(`<tr><td valign="middle">${loopLogo(brand, base, 150, dark)}</td>${d ? `<td valign="middle" style="padding:0 14px 0 22px;font:9px/12px ${F};letter-spacing:1.6px;color:#9b9b9b">${esc(d.label.toUpperCase())}</td><td valign="middle">${divisionLogo(brand, base, d.srcDark)}</td>` : ''}</tr>`)}</td></tr>
+<tr><td height="3" bgcolor="${c.rule ?? c.ink}" style="font-size:0;line-height:0">&nbsp;</td></tr>`, ';width:420px');
+  },
+  quiet: ({ c, p, brand, base, phoneLink, emailLink }) => {
+    const d = brand.division;
+    return T(`
+<tr><td style="font:13px/19px ${F};color:${c.ink}"><b style="font-weight:600">${esc(p.name)}</b>&nbsp; <span style="color:${c.faint}">/</span> &nbsp;<span style="color:${c.muted}">${esc(p.title)}</span></td></tr>
+<tr><td style="font:12px/19px ${F};color:${c.ink}">${[phoneLink, emailLink].filter(Boolean).join(sep(c))}</td></tr>
+<tr><td style="padding:14px 0 0 0">${T(`<tr><td valign="middle" style="padding-right:12px">${loopLogo(brand, base, 110)}</td>${d ? `<td valign="middle" style="padding-right:8px;font:11px/14px ${F};color:${c.faint}">a division of</td><td valign="middle">${divisionLogo(brand, base)}</td>` : ''}</tr>`)}</td></tr>`);
   },
 
   // Letter: a serif name like a handwritten sign-off, the rest small and quiet, logo to the right.
